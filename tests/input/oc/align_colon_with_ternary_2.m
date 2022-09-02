@@ -16,5 +16,5 @@ static void func() {
 }
 
 static void func() {
-	NSString *s = YES ? [object test:nil test2:YES test3:nil test4:NO] : nil;
+    NSString *s = YES ? [object test:nil test2:YES test3:nil test4:NO] : nil;
 }

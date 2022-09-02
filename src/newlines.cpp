@@ -3487,8 +3487,8 @@ static void newline_oc_msg(Chunk *start)
    {
       return;
    }
-   // Get count of parameters
-   size_t parameter_count = 0;
+   // Get length of longest line
+   size_t longest_line = 0;
 
    for (Chunk *pc = start->GetNextNcNnl(); pc->IsNotNullChunk(); pc = pc->GetNextNcNnl())
    {
@@ -3497,16 +3497,15 @@ static void newline_oc_msg(Chunk *start)
          break;
       }
 
-      if (pc->Is(CT_OC_COLON))
+      if (pc->orig_col_end > longest_line)
       {
-         parameter_count++;
+         longest_line = pc->orig_col_end;
       }
    }
 
-   size_t min_params = options::nl_oc_msg_args_min_params();
+   size_t max_code_width = options::nl_oc_msg_args_max_code_width();
 
-   if (  parameter_count < min_params
-      && min_params != 0)
+   if (longest_line <= max_code_width)
    {
       return;
    }
@@ -3518,7 +3517,7 @@ static void newline_oc_msg(Chunk *start)
          break;
       }
 
-      if (pc->Is(CT_OC_MSG_NAME))
+      if (pc->Is(CT_OC_MSG_NAME) && pc->level-1 == start->level)
       {
          newline_add_before(pc);
       }
